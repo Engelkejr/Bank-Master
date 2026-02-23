@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#050507">
+    
+    <title>BankMaster Pro v6</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050507;
+            --crise: #ff4757;
+            --mercado: #2e86de;
+            --aceleracao: #23d160;
+            --card-glass: rgba(255, 255, 255, 0.06);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: #fff;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            transition: background 0.8s ease;
+        }
+
+        .glow {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            filter: blur(100px);
+            border-radius: 50%;
+            z-index: 0;
+            opacity: 0.12;
+            transition: all 0.8s ease;
+            pointer-events: none;
+        }
+
+        .container { 
+            width: 100%; 
+            max-width: 420px; 
+            padding: 24px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; 
+            z-index: 1;
+        }
+        
+        .card {
+            background: linear-gradient(165deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.03) 100%);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 44px;
+            padding: 40px 30px;
+            min-height: 540px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .card.drawing { transform: scale(0.85) rotateX(15deg); opacity: 0.3; filter: blur(4px); }
+
+        .badge { 
+            font-size: 0.7rem; 
+            letter-spacing: 4px; 
+            text-transform: uppercase; 
+            font-weight: 900; 
+            padding: 6px 0;
+            transition: color 0.6s ease;
+        }
+
+        h1 { font-size: 2.3rem; margin: 12px 0; font-weight: 900; line-height: 1; letter-spacing: -1.5px; }
+        
+        .desc { 
+            font-size: 1.05rem; 
+            color: rgba(255,255,255,0.55); 
+            margin-bottom: 20px; 
+            font-weight: 300;
+            line-height: 1.5;
+            height: 100px;
+            overflow-y: auto;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .info-item {
+            background: rgba(255,255,255,0.04);
+            padding: 14px;
+            border-radius: 22px;
+            font-size: 0.65rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.5);
+        }
+        .info-item b { display: block; font-weight: 800; color: #fff; font-size: 0.85rem; margin-top: 4px; }
+
+        .math-banner {
+            background: rgba(255,255,255,0.07);
+            padding: 24px;
+            border-radius: 26px;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 900;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.2);
+        }
+
+        .draw-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 24px;
+            border-radius: 28px;
+            font-size: 1.2rem;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 15px 30px rgba(255,255,255,0.1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .draw-btn:active { transform: scale(0.92); filter: brightness(0.8); }
+
+        .history-pill {
+            text-align: center;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="glow" id="glow"></div>
+
+<div class="container">
+    <div id="card" class="card">
+        <div>
+            <div id="type" class="badge">SISTEMA ATIVO</div>
+            <h1 id="title">Joao & Brunna</h1>
+            <p id="desc" class="desc">Aguardando sorteio do mercado...</p>
+        </div>
+
+        <div>
+            <div class="info-grid">
+                <div class="info-item">⏳ DURAÇÃO<b id="dur">---</b></div>
+                <div class="info-item">🎯 ALVO<b id="target">---</b></div>
+            </div>
+            <div id="math" class="math-banner">PRONTOS?</div>
+        </div>
+    </div>
+
+    <button class="draw-btn" onclick="draw()">SORTEAR EVENTO</button>
+    <div class="history-pill" id="last-card">Nenhum evento ativo</div>
+</div>
+
+<script>
+const deck = [
+    { t: "Terremoto", d: "O solo tremeu e as taças de cristal da Brunna caíram! Engenheiros dizem que as fundações foram comprometidas.", m: "-25k Terreno / -50k Casa / -100k Hotel", c: "crise", dur: "Instantâneo", tgt: "Todos" },
+    { t: "Inflação", d: "O preço do cimento subiu tanto que os pedreiros estão pedindo pagamento em barras de ouro.", m: "Obras +50% no Valor", c: "crise", dur: "1 Rodada", tgt: "Banco" },
+    { t: "Crise de Crédito", d: "O gerente do banco acordou de mau humor e decidiu cortar as asas de quem gasta o que não tem.", m: "Empréstimo: 50% Bens", c: "crise", dur: "Até Pagar Dívida", tgt: "Banco" },
+    { t: "Bolha!", d: "Um influenciador postou que essa área é o 'novo hype' da cidade. Os preços dispararam sem sentido!", m: "Aluguel x2", c: "mercado", dur: "2 Rodadas", tgt: "Você escolhe" },
+    { t: "Gentrificação", d: "Abriram um café gourmet que cobra 30 reais num pão na chapa. Todo o bairro ficou insuportavelmente caro.", m: "Aluguel Lado +25%", c: "mercado", dur: "1 Rodada", tgt: "Você escolhe" },
+    { t: "Quebra da Bolsa", d: "O gráfico caiu mais rápido que o Joao no sofá depois de um rodízio. Os juros não perdoam ninguém.", m: "Pague 20% da Dívida", c: "mercado", dur: "Instantâneo", tgt: "Endividados" },
+    { t: "Boom!", d: "Descobriram petróleo no jardim! O otimismo é tanto que o dinheiro está brotando das árvores.", m: "Salário no Início x2", c: "aceleracao", dur: "1 Rodada", tgt: "Todos" },
+    { t: "Subsídio", d: "O governo lançou o programa 'Minha Casa, Minha Mansão'. Construir virou uma pechincha!", m: "Casas = Metade Valor", c: "aceleracao", dur: "Até você jogar", tgt: "Todos" },
+    { t: "Herança", d: "Um tio distante deixou um baú de moedas. Sorte de quem está precisando de um respiro!", m: "+200k (Último lugar)", c: "aceleracao", dur: "Instantâneo", tgt: "Lanterna" },
+    { t: "Morte Súbita", d: "O sistema de cartões caiu! Agora é só dinheiro na mão ou nada de negócio. Sem jeitinho!", m: "Hipotecas Proibidas", c: "crise", dur: "Até você jogar", tgt: "Todos" },
+    { t: "Taxa de Luxo", d: "O prefeito decidiu que quem tem muito jardim precisa pagar mais pelo oxigênio das plantas.", m: "-50k por Terreno", c: "crise", dur: "Instantâneo", tgt: "Proprietários" },
+    { t: "Privatização", d: "O banco cansou de ser dono de tudo e colocou a placa de 'Vende-se' em todas as prateleiras.", m: "Leilão: 1 de cada cor", c: "mercado", dur: "Imediato", tgt: "Você decide" },
+    { t: "Recessão", d: "Ninguém quer gastar, as ruas estão vazias e os aluguéis estão implorando por moradores.", m: "Aluguel -50%", c: "crise", dur: "2 Rodadas", tgt: "Todos" },
+    { t: "Escândalo Corrupção", d: "Pegaram o contador desviando verba para figurinhas raras. Hora de redistribuir!", m: "Rico paga 150k / Pobre ganha 150k", c: "crise", dur: "Instantâneo", tgt: "Todos" },
+    { t: "Casamento luxuoso", d: "O convite chegou em papel de ouro. Quem não for fica mal visto, quem for chora no pix.", m: "Pague 100k (ou 150k se reclamar)", c: "aceleracao", dur: "Instantâneo", tgt: "Todos" },
+    { t: "Medida Provisória", d: "Uma canetada oficial mudou as leis da física econômica. Tudo pode acontecer!", m: "Anule ou Dobre efeito ativo", c: "mercado", dur: "1 Rodada", tgt: "Você decide" },
+    { t: "Embargo de Obra", d: "Acharam um vaso antigo no canteiro. O Iphan parou tudo por tempo indeterminado.", m: "Aluguel de Casas/Hotéis = 0", c: "crise", dur: "2 Rodadas", tgt: "Todos" },
+    { t: "Deflação", d: "As notas parecem valer mais, mas ninguém consegue achar uma para contar história.", m: "Aluguel / 2 | Dívida -20%", c: "mercado", dur: "1 Rodada", tgt: "Todos" },
+    { t: "Cassino Legalizado", d: "Instalaram máquinas caça-níqueis no lobby. O aluguel virou o menor dos problemas!", m: "Aluguel + (Dado x 10k)", c: "aceleracao", dur: "2 Rodadas", tgt: "Você escolhe" },
+    { t: "Auditoria Fiscal", d: "Homens de terno bateram à porta. É melhor que os recibos estejam em dia!", m: "Rico paga dívida se tiver caixa", c: "crise", dur: "Instantâneo", tgt: "Mais Rico" },
+    { t: "IPO (Ações)", d: "Você fatiou sua casa em mil pedacinhos e vendeu para investidores famintos.", m: "Sócio paga hipoteca / Aluguel 50-50", c: "mercado", dur: "Permanente", tgt: "Você decide" },
+    { t: "Tornado", d: "O vento soprou tão forte que você acordou no quintal alheio! Que confusão geográfica!", m: "Troque lugar no tabuleiro", c: "mercado", dur: "Instantâneo", tgt: "Você escolhe" },
+    { t: "Tombamento", d: "Sua casa virou patrimônio cultural. O governo agora paga a manutenção.", m: "Receba 20k do Banco p/ turno", c: "aceleracao", dur: "Permanente", tgt: "Você" },
+    { t: "IPO de Sucesso", d: "Suas ações dispararam! Você é o novo lobo do mercado imobiliário.", m: "Receba 10% do seu valor em bens", c: "aceleracao", dur: "Instantâneo", tgt: "Você" },
+    { t: "Reality Show", d: "Gravaram TV na sua rua. Agora os turistas chegam com muito dinheiro para gastar.", m: "Aluguel + 30k de taxa", c: "aceleracao", dur: "3 Rodadas", tgt: "Você escolhe" },
+    { t: "Cartão Black", d: "O banco te deu um limite extra e nem vai cobrar juros. Use com sabedoria!", m: "Empréstimo de 150k sem juros", c: "aceleracao", dur: "Até usar", tgt: "Você" },
+    { t: "Hub Aeroportuário", d: "O novo aeroporto será do lado da sua casa. O barulho irrita, mas o lucro consola!", m: "Dobre aluguel de 1 lado seu", c: "aceleracao", dur: "3 Rodadas", tgt: "Você" },
+    { t: "Cashback Gov", d: "O governo errou as contas e te devolveu o que cobrou a mais. Milagre!", m: "Receba 50% do que pagou hoje", c: "aceleracao", dur: "Instantâneo", tgt: "Você" },
+    { t: "Patrocínio Master", d: "Uma marca gigante colocou um outdoor no seu terreno mais caro. Lucro passivo!", m: "Banco paga 40k se alguém cair lá", c: "aceleracao", dur: "Permanente", tgt: "Você escolhe" },
+    { t: "Insider Trading", d: "Você ouviu uma fofoca quente no almoço. A crise vem, mas você já se protegeu.", m: "Imune à próxima Crise", c: "aceleracao", dur: "Até a Crise", tgt: "Você" },
+    { t: "Sorte no Leilão", d: "Arrematou um terreno abandonado por um preço de banana. Que visão!", m: "Compre terreno vago por 50%", c: "aceleracao", dur: "Instantâneo", tgt: "Você" }
+];
+
+let lastDrawName = "";
+
+function draw() {
+    const cardEl = document.getElementById('card');
+    const glowEl = document.getElementById('glow');
+    
+    cardEl.classList.add('drawing');
+    
+    setTimeout(() => {
+        const card = deck[Math.floor(Math.random() * deck.length)];
+        const color = `var(--${card.c})`;
+        
+        glowEl.style.background = color;
+        cardEl.style.borderColor = color;
+        
+        document.getElementById('title').innerText = card.t;
+        document.getElementById('title').style.color = color;
+        document.getElementById('type').innerText = card.c;
+        document.getElementById('type').style.color = color;
+        
+        document.getElementById('desc').innerText = card.d;
+        document.getElementById('math').innerText = card.m;
+        document.getElementById('dur').innerText = card.dur;
+        document.getElementById('target').innerText = card.tgt;
+
+        if(lastDrawName) {
+            document.getElementById('last-card').innerText = "Anterior: " + lastDrawName;
+        }
+        lastDrawName = card.t;
+        
+        cardEl.classList.remove('drawing');
+        
+        if(navigator.vibrate) navigator.vibrate([30, 15, 30]);
+    }, 350);
+}
+</script>
+</body>
+</html>
